@@ -1,0 +1,9 @@
+{
+  "name": "MarinaPay",
+  "short_name": "MarinaPay",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f5f8ff",
+  "theme_color": "#175df5",
+  "icons": []
+}
