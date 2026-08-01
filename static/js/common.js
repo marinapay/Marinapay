@@ -1,5 +1,12 @@
 import { CONFIG } from './config.js';
 
+function getKakaoLink() {
+  const isMobile =
+    /Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent) ||
+    (navigator.maxTouchPoints > 1 && /Macintosh/i.test(navigator.userAgent));
+  return isMobile ? CONFIG.contact.kakaoLinkMobile : CONFIG.contact.kakaoLinkPc;
+}
+
 const SELECTORS = {
   menuToggle: '[data-js="menu-toggle"]',
   menu: '[data-js="site-nav"]',
@@ -297,7 +304,7 @@ function setupBlueFlowCursorBubbles() {
 
 function setupFloatingActions() {
   const actions = document.createElement('aside');
-  const contactHref = CONFIG.contact.kakaoLink;
+  const contactHref = getKakaoLink();
 
   actions.className = 'c-floating-actions';
   actions.setAttribute('aria-label', '빠른 메뉴');
@@ -371,7 +378,7 @@ function applyContactConfig() {
   });
 
   document.querySelectorAll('a[href*="open.kakao.com"]').forEach((element) => {
-    element.href = CONFIG.contact.kakaoLink;
+    element.href = getKakaoLink();
   });
 }
 
@@ -384,3 +391,37 @@ setupBlueFlowCursorBubbles();
 setupFloatingActions();
 setCurrentYear();
 applyContactConfig();
+
+function setupAppModal() {
+  const modal = document.querySelector('[data-js="app-modal"]');
+  const triggers = [...document.querySelectorAll('[data-js="app-download"]')];
+
+  if (!modal || !triggers.length) return;
+
+  const closers = [...modal.querySelectorAll('[data-js="app-modal-close"]')];
+  const confirmButton = modal.querySelector('.c-modal__confirm');
+  let lastFocused = null;
+
+  const open = () => {
+    lastFocused = document.activeElement;
+    modal.classList.add('is-open');
+    modal.setAttribute('aria-hidden', 'false');
+    document.body.classList.add('has-modal');
+    confirmButton?.focus();
+  };
+
+  const close = () => {
+    modal.classList.remove('is-open');
+    modal.setAttribute('aria-hidden', 'true');
+    document.body.classList.remove('has-modal');
+    if (lastFocused && typeof lastFocused.focus === 'function') lastFocused.focus();
+  };
+
+  triggers.forEach((trigger) => trigger.addEventListener('click', open));
+  closers.forEach((closer) => closer.addEventListener('click', close));
+  document.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape' && modal.classList.contains('is-open')) close();
+  });
+}
+
+setupAppModal();
