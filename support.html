@@ -105,7 +105,16 @@
       <nav class="c-site-nav" id="siteNavigation" aria-label="주요 메뉴" data-js="site-nav">
         <ul class="c-site-nav__list">
           <li><a class="c-site-nav__link" href="./index.html">홈</a></li>
-          <li><a class="c-site-nav__link" href="./index.html#services">서비스 안내</a></li>
+          <li class="c-site-nav__item--dropdown">
+            <a class="c-site-nav__link c-site-nav__link--has-menu" href="./index.html#services">서비스 안내</a>
+            <ul class="c-site-nav__dropdown" aria-label="서비스 목록">
+              <li><a class="c-site-nav__sub-link" href="./pg-terminal.html">PG단말기</a></li>
+              <li><span class="c-site-nav__sub-link c-site-nav__sub-link--disabled">토스단말기<em>준비중</em></span></li>
+              <li><span class="c-site-nav__sub-link c-site-nav__sub-link--disabled">네이버커넥트<em>준비중</em></span></li>
+              <li><span class="c-site-nav__sub-link c-site-nav__sub-link--disabled">키오스크<em>준비중</em></span></li>
+              <li><span class="c-site-nav__sub-link c-site-nav__sub-link--disabled">포스기<em>준비중</em></span></li>
+            </ul>
+          </li>
           <li><a class="c-site-nav__link" href="./about.html">회사소개</a></li>
           <li><a class="c-site-nav__link" href="./support.html" aria-current="page">고객센터</a></li>
         </ul>
