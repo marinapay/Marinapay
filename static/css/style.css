@@ -4104,7 +4104,8 @@ a.c-site-nav__sub-link[aria-current='page'] {
 
 @media (max-width:960px) {
   .c-site-nav.is-open {
-    max-height:640px
+    max-height:calc(100vh - var(--header-height) - 20px);
+    overflow-y:auto
   }
 
   .c-site-nav__dropdown {
@@ -4118,6 +4119,11 @@ a.c-site-nav__sub-link[aria-current='page'] {
     pointer-events:auto;
     transform:none;
     visibility:visible
+  }
+
+  .c-site-nav__item--dropdown:hover .c-site-nav__dropdown,
+  .c-site-nav__item--dropdown:focus-within .c-site-nav__dropdown {
+    transform:none
   }
 
   .c-site-nav__dropdown::before {
@@ -4780,4 +4786,94 @@ a.p-home__product-link:hover img {
 
 .p-home__product-media img {
   filter:drop-shadow(0 12px 18px rgba(7,20,47,.18))
+}
+
+/* ==================== 개인정보 처리방침 페이지 ==================== */
+.p-policy {
+  max-width:860px
+}
+
+.p-policy__intro {
+  color:#3f4961;
+  font-size:0.95rem;
+  line-height:1.75;
+  word-break:keep-all
+}
+
+.p-policy__body h2 {
+  margin-top:44px;
+  color:var(--color-ink-950,#07142f);
+  font-family:var(--font-display);
+  font-size:1.12rem;
+  font-weight:600
+}
+
+.p-policy__body p {
+  margin-top:10px;
+  color:#3f4961;
+  font-size:0.95rem;
+  line-height:1.75;
+  word-break:keep-all
+}
+
+.p-policy__body ul {
+  display:flex;
+  flex-direction:column;
+  gap:6px;
+  margin-top:10px;
+  padding-left:20px;
+  list-style:disc
+}
+
+.p-policy__body li {
+  color:#3f4961;
+  font-size:0.95rem;
+  line-height:1.7;
+  word-break:keep-all
+}
+
+.p-policy__body li strong,
+.p-policy__body p strong {
+  color:var(--color-ink-950,#07142f);
+  font-weight:600
+}
+
+.p-policy__table-wrap {
+  margin-top:14px;
+  overflow-x:auto
+}
+
+.p-policy__body table {
+  width:100%;
+  min-width:560px;
+  border-collapse:collapse;
+  font-size:0.88rem
+}
+
+.p-policy__body th,
+.p-policy__body td {
+  padding:11px 14px;
+  border:1px solid #dfe6f2;
+  color:#3f4961;
+  line-height:1.6;
+  text-align:left;
+  vertical-align:top;
+  word-break:keep-all
+}
+
+.p-policy__body th {
+  background:var(--color-brand-50,#f1f6ff);
+  color:var(--color-ink-950,#07142f);
+  font-weight:600;
+  white-space:nowrap
+}
+
+.p-policy__date {
+  margin-top:44px;
+  font-weight:700
+}
+
+.c-site-footer__privacy {
+  color:#dfe6f2;
+  font-weight:700
 }
