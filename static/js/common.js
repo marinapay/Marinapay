@@ -23,10 +23,18 @@ function setupMobileMenu() {
 
   if (!toggle || !menu) return;
 
+  const dim = document.createElement('button');
+  dim.className = 'c-menu-dim';
+  dim.type = 'button';
+  dim.setAttribute('aria-label', '메뉴 닫기');
+  document.body.append(dim);
+
   const closeMenu = () => {
     toggle.setAttribute('aria-expanded', 'false');
     toggle.setAttribute('aria-label', '메뉴 열기');
     menu.classList.remove('is-open');
+    dim.classList.remove('is-open');
+    document.body.classList.remove('is-menu-open');
   };
 
   toggle.addEventListener('click', () => {
@@ -34,6 +42,13 @@ function setupMobileMenu() {
     toggle.setAttribute('aria-expanded', String(!isOpen));
     toggle.setAttribute('aria-label', isOpen ? '메뉴 열기' : '메뉴 닫기');
     menu.classList.toggle('is-open', !isOpen);
+    dim.classList.toggle('is-open', !isOpen);
+    document.body.classList.toggle('is-menu-open', !isOpen);
+  });
+
+  dim.addEventListener('click', () => {
+    closeMenu();
+    toggle.focus();
   });
 
   menu.addEventListener('click', (event) => {
@@ -309,12 +324,9 @@ function setupFloatingActions() {
   actions.className = 'c-floating-actions';
   actions.setAttribute('aria-label', '빠른 메뉴');
   actions.innerHTML = `
-    <div class="c-floating-scroll" role="group" aria-label="페이지 이동">
-      <button class="c-floating-scroll__button c-floating-scroll__button--top" type="button" aria-label="맨 위로 이동" data-js="scroll-top">
-        <img src="/static/images/common/chevron-right.svg" alt="">
-      </button>
-      <button class="c-floating-scroll__button c-floating-scroll__button--bottom" type="button" aria-label="맨 아래로 이동" data-js="scroll-bottom">
-        <img src="/static/images/common/chevron-right.svg" alt="">
+    <div class="c-floating-scroll">
+      <button class="c-floating-scroll__button" type="button" aria-label="맨 아래로 이동" data-js="scroll-toggle">
+        <img src="/static/images/common/arrow-right.svg" alt="">
       </button>
     </div>
     <a class="c-floating-action c-floating-action--support" href="${contactHref}" target="_blank" rel="noopener noreferrer" aria-label="카톡상담 문의">
@@ -323,34 +335,53 @@ function setupFloatingActions() {
   `;
   document.body.append(actions);
 
-  const topButton = actions.querySelector('[data-js="scroll-top"]');
-  const bottomButton = actions.querySelector('[data-js="scroll-bottom"]');
-  const updateScrollButtons = () => {
+  const scrollButton = actions.querySelector('[data-js="scroll-toggle"]');
+  const updateScrollButton = () => {
     const scrollTop = window.scrollY || document.documentElement.scrollTop;
     const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
     const isAtTop = scrollTop <= 2;
-    const isAtBottom = maxScroll - scrollTop <= 2;
 
-    topButton.disabled = isAtTop;
-    bottomButton.disabled = isAtBottom || maxScroll <= 2;
+    scrollButton.classList.toggle('is-scroll-down', isAtTop);
+    scrollButton.setAttribute('aria-label', isAtTop ? '맨 아래로 이동' : '맨 위로 이동');
+    scrollButton.disabled = maxScroll <= 2;
   };
 
-  topButton.addEventListener('click', () => {
+  scrollButton.addEventListener('click', () => {
     const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    window.scrollTo({ top:0, behavior:reducedMotion ? 'auto' : 'smooth' });
-  });
+    const scrollTop = window.scrollY || document.documentElement.scrollTop;
+    const isAtTop = scrollTop <= 2;
 
-  bottomButton.addEventListener('click', () => {
-    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({
-      top:document.documentElement.scrollHeight,
+      top:isAtTop ? document.documentElement.scrollHeight : 0,
       behavior:reducedMotion ? 'auto' : 'smooth'
     });
   });
 
-  window.addEventListener('scroll', updateScrollButtons, { passive:true });
-  window.addEventListener('resize', updateScrollButtons, { passive:true });
-  updateScrollButtons();
+  window.addEventListener('scroll', updateScrollButton, { passive:true });
+  window.addEventListener('resize', updateScrollButton, { passive:true });
+  updateScrollButton();
+}
+
+function setupProductFilter() {
+  const toggle = document.querySelector('[data-js="product-filter-toggle"]');
+  const label = document.querySelector('[data-js="product-filter-label"]');
+  const grid = document.querySelector('[data-js="product-grid"]');
+
+  if (!toggle || !label || !grid) return;
+
+  toggle.addEventListener('click', () => {
+    const isSaleOnly = !toggle.classList.contains('is-sale-only');
+    const unavailableCards = grid.querySelectorAll('.p-home__product-card--soon');
+
+    toggle.classList.toggle('is-sale-only', isSaleOnly);
+    toggle.setAttribute('aria-pressed', String(!isSaleOnly));
+    label.textContent = isSaleOnly ? '판매 상품만 표시됨' : '전체 상품 표시됨';
+    grid.classList.toggle('is-sale-only', isSaleOnly);
+    unavailableCards.forEach((card) => {
+      if (isSaleOnly) card.setAttribute('aria-disabled', 'true');
+      else card.removeAttribute('aria-disabled');
+    });
+  });
 }
 
 function setCurrentYear() {
@@ -389,6 +420,7 @@ setupTitleLetterAnimations();
 setupServiceCopySlider();
 setupBlueFlowCursorBubbles();
 setupFloatingActions();
+setupProductFilter();
 setCurrentYear();
 applyContactConfig();
 
